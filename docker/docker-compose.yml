@@ -1,0 +1,51 @@
+services:
+    nginx:
+        image: nginx:latest #последняя версия
+        container_name: nginx-repair-service
+        working_dir: /application
+        networks:
+            - internal
+        ports:
+            - "8068:80"
+        volumes:
+            - ./../:/application
+            - ./nginx/conf.d:/etc/nginx/conf.d:ro
+        depends_on:
+            - php-fpm
+
+    php-fpm:
+        build:
+            context: .
+            dockerfile: php-fpm/Dockerfile
+        container_name: php-repair-service
+        working_dir: /application
+        networks:
+            - internal
+        volumes:
+            - ./../:/application
+            - ./php-fpm/php.ini:/usr/local/etc/php/conf.d/php.ini
+        depends_on:
+            - pgsql
+
+    pgsql:
+        image: postgres:17
+        restart: always
+        container_name: pgsql-repair-service
+        environment:
+            POSTGRES_DB: repair
+            POSTGRES_USER: user
+            POSTGRES_PASSWORD: password
+        volumes:
+            - ./pgsql/init:/docker-entrypoint-initdb.d:ro
+            - 'postgres_data:/var/lib/postgresql/data'
+        networks:
+            - internal
+        ports:
+            - "5445:5432"
+
+volumes:
+    postgres_data:
+        driver: local
+networks:
+    internal:
+        driver: bridge
