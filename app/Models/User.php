@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -44,5 +45,35 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Назначенные заявки мастеру
+     *
+     * @return HasMany
+     */
+    public function assignedRequests(): HasMany
+    {
+        return $this->hasMany(RepairRequest::class, 'assigned_to');
+    }
+
+    /**
+     * Проверка, является ли пользователь диспетчером
+     *
+     * @return bool
+     */
+    public function isDispatcher(): bool
+    {
+        return $this->role === 'dispatcher';
+    }
+
+    /**
+     * Проверка, является ли пользователь мастером
+     *
+     * @return bool
+     */
+    public function isMaster(): bool
+    {
+        return $this->role === 'master';
     }
 }
