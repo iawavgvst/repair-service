@@ -45,6 +45,7 @@
 В app/Http/Services/RepairRequestService.php метод takeRequest использует транзакцию базы данных (DB::transaction), блокировку строки ((lockForUpdate()) и проверку статуса в момент блокировки. 
 
 Для проверки можно создать тестовый маршрут:
+
 Route::patch('/test/{id}', fn($id) => response()->json(
     (new \App\Http\Services\RepairRequestService())->takeRequest(
         \App\Models\RepairRequest::find($id),
