@@ -26,7 +26,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // для диспетчера
-    Route::prefix('dispatcher')->group(function () {
+    Route::prefix('dispatcher')->middleware('role:dispatcher')->group(function () {
         Route::get('/', [DispatcherController::class, 'index'])->name('dispatcher.index');
         Route::get('/{repairRequest}', [DispatcherController::class, 'show'])->name('dispatcher.show');
 
@@ -35,7 +35,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // для мастера
-    Route::prefix('master')->group(function () {
+    Route::prefix('master')->middleware('role:master')->group(function () {
         Route::get('/', [MasterController::class, 'index'])->name('master.index');
         Route::get('/{repairRequest}', [MasterController::class, 'show'])->name('master.show');
 
